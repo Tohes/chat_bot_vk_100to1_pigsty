@@ -5,18 +5,18 @@ session:
 admin:
   email: admin@admin.com
   password: admin
-database:
-  host: 0.0.0.0
-  port: 5432
-  user: kts_user
-  password: kts_pass
-  database: kts
 #database:
-#  host: localhost
+#  host: 0.0.0.0
 #  port: 5432
-#  user: postgres
-#  password: dork
-#  database: homework
+#  user: kts_user
+#  password: kts_pass
+#  database: kts
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: dork
+  database: homework2
 bot:
   token: group_token
   group_id: 1
