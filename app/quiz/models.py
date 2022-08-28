@@ -20,18 +20,27 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 
+# @dataclass
+# class Theme:
+#     id: int | None
+#     title: str
 @dataclass
 class Theme:
-    id: int | None
+    id: int
     title: str
-
 
 @dataclass
 class Question:
-    id: int | None
+    id: int
     title: str
     theme_id: int
     answers: list["Answer"]
+# @dataclass
+# class Question:
+#     id: int | None
+#     title: str
+#     theme_id: int
+#     answers: list["Answer"]
 
 
 @dataclass
