@@ -1,4 +1,4 @@
-user_token: вставьте_ваш_токен_вместо_этой_строки
+user_token: OTY3NmVjYWYtZTJhNC00NzNhLTgwM2YtZGY3OTBkYTM3YWFhXzIyNjA=
 
 session:
   key: CaY5iCkYtN7DqXdiYK1BvmGrQuaSA4Tl4bEk9my0jc0=
@@ -11,6 +11,12 @@ database:
   user: kts_user
   password: kts_pass
   database: kts
+#database:
+#  host: localhost
+#  port: 5432
+#  user: postgres
+#  password: dork
+#  database: homework
 bot:
   token: group_token
   group_id: 1
