@@ -34,11 +34,13 @@ class VkApiAccessor(BaseAccessor):
         self.logger.info("start polling")
         await self.poller.start()
 
+
     async def disconnect(self, app: "Application"):
-        if self.session:
-            await self.session.close()
+
         if self.poller:
             await self.poller.stop()
+        if self.session:
+            await self.session.close()
 
     @staticmethod
     def _build_query(host: str, method: str, params: dict) -> str:
@@ -50,14 +52,14 @@ class VkApiAccessor(BaseAccessor):
 
     async def _get_long_poll_service(self):
         async with self.session.get(
-            self._build_query(
-                host=API_PATH,
-                method="groups.getLongPollServer",
-                params={
-                    "group_id": self.app.config.bot.group_id,
-                    "access_token": self.app.config.bot.token,
-                },
-            )
+                self._build_query(
+                    host=API_PATH,
+                    method="groups.getLongPollServer",
+                    params={
+                        "group_id": self.app.config.bot.group_id,
+                        "access_token": self.app.config.bot.token,
+                    },
+                )
         ) as resp:
             data = (await resp.json())["response"]
             self.logger.info(data)
@@ -68,48 +70,40 @@ class VkApiAccessor(BaseAccessor):
 
     async def poll(self):
         async with self.session.get(
-            self._build_query(
-                host=self.server,
-                method="",
-                params={
-                    "act": "a_check",
-                    "key": self.key,
-                    "ts": self.ts,
-                    "wait": 30,
-                },
-            )
+                self._build_query(
+                    host=self.server,
+                    method="",
+                    params={
+                        "act": "a_check",
+                        "key": self.key,
+                        "ts": self.ts,
+                        "wait": 30,
+                    },
+                )
         ) as resp:
             data = await resp.json()
             self.logger.info(data)
             self.ts = data["ts"]
             raw_updates = data.get("updates", [])
-            updates = []
-            for update in raw_updates:
-                updates.append(
-                    Update(
-                        type=update["type"],
-                        object=UpdateObject(
-                            id=update["object"]["id"],
-                            user_id=update["object"]["user_id"],
-                            body=update["object"]["body"],
-                        ),
-                    )
-                )
-            await self.app.store.bots_manager.handle_updates(updates)
+            data = await resp.json()
+            self.logger.info(data)
+            self.ts = data["ts"]
+            return data["updates"]
 
-    async def send_message(self, message: Message) -> None:
+    async def send_message(self, message: Message, keyboard = {}) -> None:
         async with self.session.get(
-            self._build_query(
-                API_PATH,
-                "messages.send",
-                params={
-                    "user_id": message.user_id,
-                    "random_id": random.randint(1, 2**32),
-                    "peer_id": "-" + str(self.app.config.bot.group_id),
-                    "message": message.text,
-                    "access_token": self.app.config.bot.token,
-                },
-            )
+                self._build_query(
+                    API_PATH,
+                    "messages.send",
+                    params={
+                        "user_id": message.user_id,
+                        "random_id": random.randint(1, 2**32),
+                        "peer_id": "-" + str(self.app.config.bot.group_id),
+                        "message": message.text,
+                        "access_token": self.app.config.bot.token,
+
+                    } | keyboard,
+                )
         ) as resp:
             data = await resp.json()
             self.logger.info(data)

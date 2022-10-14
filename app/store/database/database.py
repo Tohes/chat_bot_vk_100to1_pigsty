@@ -29,10 +29,6 @@ class Database:
         DATABASE_URL = f'postgresql+asyncpg://{user}:{password}@{host}/{base}'
         self._db = db
         self._engine = create_async_engine(DATABASE_URL, echo = False, future = True)
-        # self.session = AsyncSession(self._engine)
-        # stmt = text("SELECT password FROM admins")
-        # async with self.session as session:
-        # self._engine = create_async_engine()
         self.session = sessionmaker(bind = self._engine, expire_on_commit= False, class_=AsyncSession)
 
 

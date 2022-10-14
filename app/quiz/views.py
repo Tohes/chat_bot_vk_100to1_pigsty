@@ -26,7 +26,6 @@ class ThemeAddView(AuthRequiredMixin, View):
             print('crocodile')
             print(theme)
             return json_response(data= {"id": theme.id, "title": theme.title})
-            # return json_response(data=ThemeSchema().dump(theme))
         else:
             raise HTTPConflict
 
@@ -56,9 +55,7 @@ class QuestionAddView(AuthRequiredMixin, View):
 
         if correct != 1 or len(answers) < 2:
             raise HTTPBadRequest
-        print('kitten')
         question = await self.store.quizzes.create_question(title=title, theme_id=theme_id, answers=answers)
-        print('BIG CAT')
         return json_response(data=QuestionSchema().dump(question))
 
 

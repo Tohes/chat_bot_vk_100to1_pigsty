@@ -15,7 +15,6 @@ from app.quiz.models import (
 
 class QuizAccessor(BaseAccessor):
     async def create_theme(self, title: str) -> Theme:
-        print('trying to create theme')
         title_ = title
         U2 = insert(ThemeModel).values(title = title_)
         Q2 = select(ThemeModel).where(title == title_)
@@ -79,7 +78,6 @@ class QuizAccessor(BaseAccessor):
         for res in result2:
             ans.append(Theme(id=res.id, title=res.title))
 
-
         return ans
 
 
@@ -91,11 +89,8 @@ class QuizAccessor(BaseAccessor):
     async def create_question(
         self, title: str, theme_id: int, answers: list[Answer]
     ) -> Question:
-        print('octo1')
         title_ = title
-        print('octo2')
         theme_id_ = theme_id
-        print('octo3')
         ans_list = answers
 
         U2 = insert(QuestionModel).values(title=title_, theme_id = theme_id_ )
@@ -109,31 +104,27 @@ class QuizAccessor(BaseAccessor):
             await session.commit()
             result = await session.execute(Q2)
             result2 = result.scalars().all()
-            print('octo7')
-            print(ans_list)
+
             for answer in ans_list:
 
                 try:
-                    print('legs', answer.title, 'really?', answer.is_correct)
                     U3 = insert(AnswerModel).values(title = answer.title, is_correct = answer.is_correct,
                                                     question_id = result2[0].id)
                 except:
-                    print('legs', answer['title'], 'really?', answer['is_correct'])
+
                     U3 = insert(AnswerModel).values(title=answer['title'], is_correct=answer['is_correct'],
                                                     question_id=result2[0].id)
 
                 await session.execute(U3)
                 await session.commit()
-            print('octo8')
+
             Q3 = select(AnswerModel).where(AnswerModel.question_id == result2[0].id)
-            print('octo9')
+
             result3 = await session.execute(Q3)
             result4 = result3.scalars().all()
-            print('octo10')
             resp_list = []
             for rs2 in result4:
                 resp_list.append(Answer(title = rs2.title, is_correct=rs2.is_correct))
-            print('octo11')
             ans = Question(id=result2[0].id, title=result2[0].title, theme_id=result2[0].theme_id,
                            answers=resp_list)
 

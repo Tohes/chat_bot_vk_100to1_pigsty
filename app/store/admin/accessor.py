@@ -17,7 +17,6 @@ class AdminAccessor(BaseAccessor):
 
     async def connect(self, app: "Application"):
         # TODO: создать админа по данным в config.yml здесь
-        print('on connection!')
         self.app = app
         email = self.app.config.admin.email
         password = self.app.config.admin.password
@@ -39,17 +38,10 @@ class AdminAccessor(BaseAccessor):
         else:
             ans = None
 
-        # results_as_dict = result.mappings().all()
-
-        # id_ = results_as_dict[0]['id']
-        # email_ = results_as_dict[0]['email']
-        # password_=results_as_dict[0]['password']
-        # amd = Admin( id = id_, email=email_, password=password_)
 
         return ans
 
     async def create_admin(self, email: str, password: str) -> Admin:
-        print('trying to create admin')
         admin = Admin(email=email, password=sha256(password.encode()).hexdigest(), id=1)
         query = text("SELECT email, password, id FROM admins")
         dbs = Database(self.app)
@@ -60,7 +52,9 @@ class AdminAccessor(BaseAccessor):
         print(results_as_dict)
         if not results_as_dict:
             pwd = sha256(password.encode()).hexdigest()
-            U1 = insert(AdminModel).values(id = 1, email = 'admin@admin.com', password = pwd)
+            # U1 = insert(AdminModel).values(id = 1, email = 'admin@admin.com', password = pwd)
+            U1 = insert(AdminModel).values(id=1, email= self.app.config.admin.email \
+                                           , password=self.app.config.admin.password)
             # dbs = Database(self.app)
             # await dbs.connect()
             async with dbs.session() as session:
